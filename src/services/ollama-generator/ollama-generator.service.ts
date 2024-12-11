@@ -32,6 +32,10 @@ export class OllamaGeneratorService
         const responseEntity = new ChatResponseEntity();
         responseEntity.chat = chatEntity;
 
+        const requestEntity = ChatResponseEntity.fromChatMessage(requestMessage);
+        requestEntity.chat = chatEntity
+
+        const requestId = await this.requestRepository.save(requestEntity).then(entity => entity.id);
         const responseId = await this.requestRepository.save(responseEntity).then(entity => entity.id);
         responseEntity.id = responseId;
 

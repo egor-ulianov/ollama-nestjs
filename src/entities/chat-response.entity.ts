@@ -1,5 +1,7 @@
 import { ChatResponse } from "ollama";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ChatEntity } from "./chat.entity";
+import { ChatMessage } from "src/models/chat-message.model";
 
 @Entity('chat_response')
 export class ChatResponseEntity 
@@ -47,6 +49,13 @@ export class ChatResponseEntity
 
     //#endregion Properties
 
+    //#region Relationships
+
+    @ManyToOne(() => ChatEntity, (chat) => chat.chatResponses, { onDelete: 'CASCADE' })
+    public chat: ChatEntity;
+    
+    //#endregion Relationships
+
     //#region Static Methods
 
     public static fromChatResponse(response: ChatResponse): ChatResponseEntity
@@ -65,6 +74,16 @@ export class ChatResponseEntity
         entity.prompt_eval_duration = response.prompt_eval_duration;
         entity.eval_count = response.eval_count;
         entity.eval_duration = response.eval_duration;
+
+        return entity;
+    }
+
+    public static fromChatMessage(message: ChatMessage): ChatResponseEntity
+    {
+        const entity = new ChatResponseEntity();
+
+        entity.message_role = message.role;
+        entity.message_content = message.content;
 
         return entity;
     }
