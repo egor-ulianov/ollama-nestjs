@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ChatResponse } from 'ollama';
 import { ChatMessage } from 'src/models/chat-message.model';
 import { OllamaGeneratorService } from 'src/services/ollama-generator/ollama-generator.service';
-import { ChatResponseModel } from './chat-response.model';
+import { ChatResponseModel } from '../../models/chat-response.model';
 
 @Controller('api/chat-messages')
 export class ChatMessagesController 

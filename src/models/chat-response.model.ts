@@ -7,6 +7,8 @@ export class ChatResponseModel implements ChatResponse
 
     public id: number;
 
+    public chat_id: number;
+
     public url: string;
 
     public model: string;
@@ -40,6 +42,7 @@ export class ChatResponseModel implements ChatResponse
         const model = new ChatResponseModel();
 
         model.id = response.id;
+        model.chat_id = response.chat.id;
         model.url = `/api/chat-messages/message/${response.id}`;
         model.model = response.model;
         model.created_at = response.created_at;
