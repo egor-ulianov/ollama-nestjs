@@ -17,7 +17,7 @@ export class ChatEntity
 
     //#region Relationships
 
-    @OneToMany(() => ChatResponseEntity, (chatResponse) => chatResponse.chat, { cascade: true })
+    @OneToMany(() => ChatResponseEntity, (chatResponse) => chatResponse.chat, { cascade: true, nullable: true })
     public chatResponses: ChatResponseEntity[];
 
     //#endregion Relationships
