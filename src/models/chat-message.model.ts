@@ -10,6 +10,8 @@ export class ChatMessage
 
     public images: Uint8Array[] | string[];
 
+    public format: Object | null;
+
     //#endregion Properties
 
     //#region Constructor

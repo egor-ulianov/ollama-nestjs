@@ -6,16 +6,17 @@ import { OllamaGeneratorService } from './services/ollama-generator/ollama-gener
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatResponseEntity } from './entities/chat-response.entity';
 import { ConfigModule } from '@nestjs/config';
+import { ChatEntity } from './entities/chat.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'database.sqlite',
-      entities: [ChatResponseEntity],
+      entities: [ChatResponseEntity, ChatEntity],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([ChatResponseEntity]),
+    TypeOrmModule.forFeature([ChatResponseEntity, ChatEntity]),
     ConfigModule.forRoot()
   ],
   controllers: [AppController, ChatMessagesController],
