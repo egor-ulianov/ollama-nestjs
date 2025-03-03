@@ -26,7 +26,7 @@ export class ChatMessagesController
         return chatResponse;
     }
 
-    @Post('chat/:id/message')
+    @Post('chat/:id/messages')
     public async postToChat(@Param('id') chatId: number, @Body() requestMessage: ChatMessage, @Query('modelId') modelId?: string): Promise<ChatResponseModel>
     {
         const generatedMessage: ChatResponseModel = await this._ollamaGeneratorService.generateChatMessage(requestMessage, modelId, Number(chatId));
