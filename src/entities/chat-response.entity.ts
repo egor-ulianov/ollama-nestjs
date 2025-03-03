@@ -51,7 +51,7 @@ export class ChatResponseEntity
 
     //#region Relationships
 
-    @ManyToOne(() => ChatEntity, (chat) => chat.chatResponses, { onDelete: 'CASCADE' })
+    @ManyToOne(() => ChatEntity, (chat) => chat.chatResponses, { onDelete: 'CASCADE', nullable: true })
     public chat: ChatEntity;
     
     //#endregion Relationships

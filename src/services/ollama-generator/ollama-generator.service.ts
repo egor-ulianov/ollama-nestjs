@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ChatResponse } from 'ollama';
 import { ChatMessage } from 'src/models/chat-message.model';
 import ollama from 'ollama';
@@ -38,15 +38,15 @@ export class OllamaGeneratorService
 
     public async generateChatMessage(requestMessage: ChatMessage, modelId?: string, chatId?: number): Promise<ChatResponseModel>
     {
+        console.log(chatId);
         const chatEntity = await this.obtainChat(chatId);
         const responseEntity = new ChatResponseEntity();
         responseEntity.chat = chatEntity;
 
         const requestEntity = ChatResponseEntity.fromChatMessage(requestMessage);
         requestEntity.created_at = new Date();
-        requestEntity.chat = chatEntity
+        requestEntity.chat = chatEntity;
 
-        const requestId = await this.requestRepository.save(requestEntity).then(entity => entity.id);
         const responseId = await this.requestRepository.save(responseEntity).then(entity => entity.id);
         responseEntity.id = responseId;
 
@@ -63,6 +63,11 @@ export class OllamaGeneratorService
             relations: verbose ? ['chatResponses']: [],
         });
 
+        if (!chatEntity)
+        {
+            throw new NotFoundException('Chat not found');
+        }
+
         return ChatModel.fromChatResponse(chatEntity, verbose);
     }
 
@@ -74,13 +79,18 @@ export class OllamaGeneratorService
         }
         else
         {
-            return this.requestRepository.save(new ChatEntity());
+            return this.chatRepository.save(new ChatEntity());
         }
     }
 
     public async getChatMessage(id: number): Promise<ChatResponseModel>
     {
         const responseEntity = await this.requestRepository.findOne({where: {id}, relations: ['chat']});
+
+        if (!responseEntity)
+        {
+            throw new NotFoundException('Chat message not found');
+        }
 
         return ChatResponseModel.fromChatResponse(responseEntity);
     }
