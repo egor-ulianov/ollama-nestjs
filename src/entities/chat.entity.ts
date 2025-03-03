@@ -7,9 +7,15 @@ export class ChatEntity
 {
     //#region Properties
 
+    /*
+    * The primary key of the entity
+    */
     @PrimaryGeneratedColumn()
     public id: number;
 
+    /*
+    * The name of the chat
+    */
     @Column({ nullable: true })
     public name: string;
 
