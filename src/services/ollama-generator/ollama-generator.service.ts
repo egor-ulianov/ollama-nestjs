@@ -25,8 +25,13 @@ export class OllamaGeneratorService
 
     //#endregion Constructor
     
-    //#region Methods
+    //#region Public Methods
 
+    /**
+     * Creates a chat
+     * @param chatModel  The chat model to create
+     * @returns The created chat
+     */
     public async createChat(chatModel: ChatModel): Promise<ChatModel>
     {
         let chatEntity = new ChatEntity();
@@ -36,9 +41,15 @@ export class OllamaGeneratorService
         return ChatModel.fromChatResponse(chatEntity);
     }
 
+    /**
+     * Generates a chat message
+     * @param requestMessage  The request message to generate a response for
+     * @param modelId  The model to use to generate the response
+     * @param chatId  The chat id to generate the response for
+     * @returns The generated chat response
+     */
     public async generateChatMessage(requestMessage: ChatMessage, modelId?: string, chatId?: number): Promise<ChatResponseModel>
     {
-        console.log(chatId);
         const chatEntity = await this.obtainChat(chatId);
         const responseEntity = new ChatResponseEntity();
         responseEntity.chat = chatEntity;
@@ -55,6 +66,12 @@ export class OllamaGeneratorService
         return ChatResponseModel.fromChatResponse(responseEntity);
     }
 
+    /**
+     * Gets a chat
+     * @param chatId The chat id to get 
+     * @param verbose Whether to include the chat messages
+     * @returns chat
+     */
     public async getChat(chatId: number, verbose: boolean = false): Promise<ChatModel>
     {
         const chatEntity = await this.chatRepository.findOne(
@@ -71,18 +88,12 @@ export class OllamaGeneratorService
         return ChatModel.fromChatResponse(chatEntity, verbose);
     }
 
-    private async obtainChat(chatId?: number): Promise<ChatEntity>
-    {
-        if (chatId)
-        {
-            return this.chatRepository.findOne({where: {id: chatId}});
-        }
-        else
-        {
-            return this.chatRepository.save(new ChatEntity());
-        }
-    }
-
+    /**
+     * Gets a chat message
+     * @param id The id of the chat message to get
+     * @returns The chat message
+     * @throws NotFoundException
+     */
     public async getChatMessage(id: number): Promise<ChatResponseModel>
     {
         const responseEntity = await this.requestRepository.findOne({where: {id}, relations: ['chat']});
@@ -95,9 +106,30 @@ export class OllamaGeneratorService
         return ChatResponseModel.fromChatResponse(responseEntity);
     }
 
+    /**
+     * Gets the chat messages
+     * @param chatId The chat id to get the messages for
+     * @returns The chat messages
+     */
     public async getChatMessages(chatId: number): Promise<ChatResponseModel[]>
     {
         return this.getAllChatResponsesPerChat(chatId);
+    }
+
+    //#endregion Public Methods
+    
+    //#region Private Methods
+
+    private async obtainChat(chatId?: number): Promise<ChatEntity>
+    {
+        if (chatId)
+        {
+            return this.chatRepository.findOne({where: {id: chatId}});
+        }
+        else
+        {
+            return this.chatRepository.save(new ChatEntity());
+        }
     }
 
     private async generateChatResponse(requestMessage: ChatMessage, responseId: number, chat: ChatEntity, modelId?: string): Promise<ChatResponse>
@@ -129,7 +161,6 @@ export class OllamaGeneratorService
             order: { created_at: 'ASC', id: 'ASC' },
         }).then(entities => entities.map(entity => ChatResponseModel.fromChatResponse(entity)));
     }
-    
 
-    //#endregion Methods
+    //#endregion Private Methods
 }
